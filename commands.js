@@ -1,6 +1,5 @@
-var fs = require("fs");
-var path = require("path");
-var http = require("http");
+const fs = require("fs");
+const path = require("path");
 
 function done(output) {
     process.stdout.write(output);
@@ -8,8 +7,8 @@ function done(output) {
 }
 
 function evaluateCmd(userInput) {
-    var userInputArray = userInput.split(" ");
-    var command = userInputArray[0];
+    const userInputArray = userInput.split(" ");
+    const command = userInputArray[0];
 
     switch (command) {
         case "pwd":
@@ -33,18 +32,12 @@ function evaluateCmd(userInput) {
         case "tail":
             commandLibrary.tail(userInputArray.slice(1));
             break;
-        case "curl":
-            commandLibrary.curl(userInputArray.slice(1));
-            break;
-        case "sort":
-            commandLibrary.sort(userInputArray.slice(1));
-            break;
         default:
             commandLibrary.errorHandler(userInputArray.join(" "));
     }
 }
 
-var commandLibrary = {
+const commandLibrary = {
     "pwd": function() {
         done(path.dirname(process.argv[1]));
     },
@@ -53,58 +46,44 @@ var commandLibrary = {
         done(currentDate);
     },
     "ls": function() {
-        fs.readdir(".", function(err, files) {
-            var output = "";
+        fs.readdir(".", (err, files) => {
+            let output = "";
             if (err) throw err;
-            files.forEach(function(file) {
+            files.forEach((file) => {
                 output += file.toString() + "\t";
             });
             done(output);
         });
     },
     "cat": function(fullPath) {
-        var fileName = fullPath[0];
-        fs.readFile(fileName, function(err, data) {
+        const fileName = fullPath[0];
+        fs.readFile(fileName, (err, data) => {
             if (err) throw err;
             done(data);
         });
     },
     "echo": function(userInput) {
-        var userInputArray = userInput.split(" ");
-        let output = "";
-        for(var i = 0; i < userInputArray.length; i++){
-          output += userInputArray[i] + " ";
-        }
-        done(output);
+        done(userInput);
     },
     "head": function(fullPath) {
-        var fileName = fullPath[0];
-        fs.readFile(fileName, function(err, data) {
+        let fileName = fullPath[0];
+        fs.readFile(fileName, (err, data) => {
             if (err) throw err;
             // console.log("filename", data.toString());
-            var dataArr = data.toString().split("\n");
+            let dataArr = data.toString().split("\n");
             done(dataArr.slice(0,5).join("\n"));
         });
     },
     "tail": function(fullPath) {
-        var fileName = fullPath[0];
-        fs.readFile(fileName, function(err, data) {
+        let fileName = fullPath[0];
+        fs.readFile(fileName, (err, data) => {
             if (err) throw err;
-            var dataArr = data.toString().split("\n");
-            var length = dataArr.length;
+            let dataArr = data.toString().split("\n");
+            let length = dataArr.length;
             done(dataArr.slice(length - 5).join("\n"));
         });
     },
-    "curl": function (url) { //this will be an array..
-        rawUrl = url[0];
-        var cleanUrl = rawUrl.match(/^http:\/\//) ? rawUrl : "http://" + rawUrl;
-        request(cleanUrl, function (error, response, body) {
-            if (!error && response.statusCode == 200) {
-                done(body);
-            }
-        });
-    },
-    "errorHandler": function(userInput) {
+    "errorHandler": (userInput) => {
       done("-bash: " + userInput + ": command not found");
     }
 };
