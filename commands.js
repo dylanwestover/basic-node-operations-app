@@ -1,12 +1,15 @@
 const fs = require("fs");
 const path = require("path");
 
+// Write out data
 function done(output) {
     process.stdout.write(output);
     process.stdout.write('\nprompt > ');
 }
 
+// Where we will store our commands
 function evaluateCmd(userInput) {
+    // parses the user input to understand which command was typed
     const userInputArray = userInput.split(" ");
     const command = userInputArray[0];
 
@@ -37,6 +40,7 @@ function evaluateCmd(userInput) {
     }
 }
 
+// Where we store the logic of our commands
 const commandLibrary = {
     "pwd": function() {
         done(path.dirname(process.argv[1]));
